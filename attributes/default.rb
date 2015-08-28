@@ -17,7 +17,9 @@
 #
 
 # vm.args
-default['riak_cs']['args']['-name'] = "riak-cs@#{node['ipaddress']}"
+bind_interface = node['riak_cs']['bind-interface']
+address = node[:network][:interfaces][bind_interface][:addresses].find {|addr, addr_info| addr_info[:family] == "inet"}.first
+default['riak_cs']['args']['-name'] = "riak-cs@#{address}"
 default['riak_cs']['args']['-setcookie'] = "riak-cs"
 default['riak_cs']['args']['+K'] = true
 default['riak_cs']['args']['+A'] = 64
@@ -36,17 +38,17 @@ class ::Array
 end
 
 #riak_cs
-default['riak_cs']['config']['riak_cs']['cs_ip'] = node['ipaddress'].to_erl_string
+default['riak_cs']['config']['riak_cs']['cs_ip'] = address.to_erl_string
 default['riak_cs']['config']['riak_cs']['cs_port'] = 8080
-default['riak_cs']['config']['riak_cs']['riak_ip'] = node['ipaddress'].to_erl_string
+default['riak_cs']['config']['riak_cs']['riak_ip'] = address.to_erl_string
 default['riak_cs']['config']['riak_cs']['riak_pb_port'] = 8087
-default['riak_cs']['config']['riak_cs']['stanchion_ip'] = node['ipaddress'].to_erl_string
+default['riak_cs']['config']['riak_cs']['stanchion_ip'] = address.to_erl_string
 default['riak_cs']['config']['riak_cs']['stanchion_port'] = 8085
 default['riak_cs']['config']['riak_cs']['stanchion_ssl'] = false
 default['riak_cs']['config']['riak_cs']['anonymous_user_creation'] = false
 default['riak_cs']['config']['riak_cs']['admin_key'] = "admin-key".to_erl_string
 default['riak_cs']['config']['riak_cs']['admin_secret'] = "admin-secret".to_erl_string
-#default['riak_cs']['config']['riak_cs']['admin_ip'] = node['ipaddress'].to_erl_string
+#default['riak_cs']['config']['riak_cs']['admin_ip'] = address.to_erl_string
 #default['riak_cs']['config']['riak_cs']['admin_port'] = 8000
 #default['riak_cs']['config']['riak_cs']['ssl'] = [["certfile", "./etc/cert.pem".to_erl_string].to_erl_tuple, ["keyfile", "./etc/key.pem".to_erl_string].to_erl_tuple]
 default['riak_cs']['config']['riak_cs']['cs_root_host'] = "s3.amazonaws.com".to_erl_string

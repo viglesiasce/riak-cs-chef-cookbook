@@ -26,7 +26,9 @@ default['stanchion']['package']['version']['build'] = "1"
 default['stanchion']['package']['config_dir'] = "/etc/stanchion"
 
 #vm.args
-default['stanchion']['args']['-name'] = "stanchion@#{node['ipaddress']}"
+bind_interface = node['riak_cs']['bind-interface']
+address = node[:network][:interfaces][bind_interface][:addresses].find {|addr, addr_info| addr_info[:family] == "inet"}.first
+default['stanchion']['args']['-name'] = "stanchion@#{address}"
 default['stanchion']['args']['-setcookie'] = "stanchion"
 default['stanchion']['args']['+K'] = true
 default['stanchion']['args']['+A'] = 64
@@ -44,11 +46,11 @@ class ::Array
 end
 
 #stanchion
-default['stanchion']['config']['stanchion']['stanchion_ip'] = node['ipaddress'].to_erl_string
+default['stanchion']['config']['stanchion']['stanchion_ip'] = address.to_erl_string
 default['stanchion']['config']['stanchion']['stanchion_port'] = 8085
 #default['stanchion']['config']['stanchion']['ssl'] = [["certfile", "./etc/cert.pem".to_erl_string].to_erl_tuple, ["keyfile", "./etc/key.pem".to_erl_string].to_erl_tuple]
 default['stanchion']['config']['stanchion']['auth_bypass'] = false
-default['stanchion']['config']['stanchion']['riak_ip'] = node['ipaddress'].to_erl_string
+default['stanchion']['config']['stanchion']['riak_ip'] = address.to_erl_string
 default['stanchion']['config']['stanchion']['riak_pb_port'] = 8087
 default['stanchion']['config']['stanchion']['admin_key'] = "admin-key".to_erl_string
 default['stanchion']['config']['stanchion']['admin_secret'] = "admin-secret".to_erl_string

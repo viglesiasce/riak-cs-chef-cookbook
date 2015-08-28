@@ -26,7 +26,9 @@ default['riak_cs_control']['package']['version']['build'] = "1"
 default['riak_cs_control']['package']['config_dir'] = "/etc/riak-cs-control"
 
 #vm.args
-default['riak_cs_control']['args']['-name'] = "riak-cs-control@#{node['ipaddress']}"
+bind_interface = node['riak_cs']['bind-interface']
+address = node[:network][:interfaces][bind_interface][:addresses].find {|addr, addr_info| addr_info[:family] == "inet"}.first
+default['riak_cs_control']['args']['-name'] = "riak-cs-control@#{address}"
 default['riak_cs_control']['args']['-setcookie'] = "riak-cs-control"
 default['riak_cs_control']['args']['+K'] = true
 default['riak_cs_control']['args']['+A'] = 64
@@ -49,7 +51,7 @@ default['riak_cs_control']['config']['riak_cs_control']['port'] = 8000
 default['riak_cs_control']['config']['riak_cs_control']['cs_hostname'] = "s3.amazonaws.com".to_erl_string
 default['riak_cs_control']['config']['riak_cs_control']['cs_port'] = 80
 default['riak_cs_control']['config']['riak_cs_control']['cs_protocol'] = "http".to_erl_string
-default['riak_cs_control']['config']['riak_cs_control']['cs_proxy_host'] = node['ipaddress'].to_erl_string
+default['riak_cs_control']['config']['riak_cs_control']['cs_proxy_host'] = address.to_erl_string
 default['riak_cs_control']['config']['riak_cs_control']['cs_proxy_port'] = 8080
 default['riak_cs_control']['config']['riak_cs_control']['cs_admin_key'] = "admin-key".to_erl_string
 default['riak_cs_control']['config']['riak_cs_control']['cs_admin_secret'] = "admin-secret".to_erl_string
